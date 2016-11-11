@@ -11,6 +11,9 @@ export default class logger {
     this.opts = {}
     this.opts.verbose = argv.verbose || false
     this.opts.debug = argv['deep-debug']
+    if (this.opts.debug) {
+      this.opts.verbose = true
+    }
     _.bindAll(this, [
       'debug',
       'verbose',

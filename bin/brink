@@ -6,9 +6,10 @@ import Liftoff from 'liftoff'
 import interpret from 'interpret'
 import minimist from 'minimist'
 import Logger from '../src/helpers/log'
+
 import generate from '../src/generate'
 
-
+// Arguments
 const minOpts = {
   alias: {
     verbose: 'v',
@@ -17,11 +18,11 @@ const minOpts = {
     dd: 'deep-debug',
   },
 }
+
 const argv = minimist(process.argv.slice(2), minOpts)
 const log = global.log = new Logger(argv)
-const verbose = argv.verbose
-const dd = argv.dd
 
+// Constructor
 const Brink = new Liftoff({
   name: 'brink',
   processTitle: 'brink',
@@ -37,7 +38,9 @@ const Brink = new Liftoff({
   },
   extensions: interpret.jsVariants,
 })
-if (dd) {
+
+// Deep Debug
+if (argv.dd) {
   Brink
     .on('require', name =>
       log.verbose('Require:', name))
@@ -56,24 +59,23 @@ function contains(args) {
 
 }
 
-const launch = function launch(args) {
+const launch = function launch(args, env) {
   const cases = {
     generate,
+    g: generate,
   }
   const program = args._[0]
+  if (cases[program]) {
+    return cases[program](args, env)
+  }
+  return false
   // Pausing here
 }
 
-
-Brink.launch({
-  cwd: argv.cwd,
-  configPath: argv.brinkfile || argv.config,
-  require: argv.require,
-  completion: argv.completion,
-}, function invoke(env) {
+const invoke = function invoke(env) {
   // log useful data
   log.info('arguments', argv)
-  if (dd) {
+  if (argv.dd) {
     log.debug('env:', env)
     log.debug('argv:', argv)
     log.debug('config:', this)
@@ -98,9 +100,18 @@ Brink.launch({
   if (env.configPath) {
     configuration = require(env.configPath)
     log.debug('configuration', configuration)
-    return launch(argv)
+    return launch(argv, env)
   }
 
   log.error(`No ${Brink.configName} found.`)
   process.exit(1)
-})
+  return false
+}
+
+Brink.launch({
+  cwd: argv.cwd,
+  configPath: argv.brinkfile || argv.config,
+  require: argv.require,
+  completion: argv.completion,
+}, invoke)
+

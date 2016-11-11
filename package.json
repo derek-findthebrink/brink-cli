@@ -49,6 +49,7 @@
     "colors": "^1.1.2",
     "concurrently": "^2.2.0",
     "dotenv": "^2.0.0",
+    "fs-extra": "^1.0.0",
     "interpret": "^1.0.1",
     "liftoff": "^2.3.0",
     "lodash": "^4.16.4",
