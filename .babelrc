@@ -1,0 +1,15 @@
+{
+  "presets": ["es2015"],
+
+  "plugins": [
+    "transform-runtime",
+    "add-module-exports",
+    "transform-decorators-legacy"
+  ],
+
+  "env": {
+    "development": {
+      "plugins": []
+    }
+  }
+}

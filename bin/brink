@@ -1,0 +1,106 @@
+#!/usr/bin/env babel-node
+/* eslint-env node */
+/* eslint-disable global-require, import/no-dynamic-require */
+
+import Liftoff from 'liftoff'
+import interpret from 'interpret'
+import minimist from 'minimist'
+import Logger from '../src/helpers/log'
+import generate from '../src/generate'
+
+
+const minOpts = {
+  alias: {
+    verbose: 'v',
+    h: 'help',
+    generate: 'g',
+    dd: 'deep-debug',
+  },
+}
+const argv = minimist(process.argv.slice(2), minOpts)
+const log = global.log = new Logger(argv)
+const verbose = argv.verbose
+const dd = argv.dd
+
+const Brink = new Liftoff({
+  name: 'brink',
+  processTitle: 'brink',
+  moduleName: 'brink-cli',
+  configName: 'brinkfile',
+  configFiles: {
+    brinkfile: {
+      up: {
+        path: '.',
+        findUp: true,
+      },
+    },
+  },
+  extensions: interpret.jsVariants,
+})
+if (dd) {
+  Brink
+    .on('require', name =>
+      log.verbose('Require:', name))
+    .on('requireFail', (name, err) => {
+      log.error(`Could not require: ${name}`, err)
+    })
+    .on('respawn', (flags, child) =>
+      log.verbose(`
+      Respawn
+      flags: ${flags}
+      pid: ${child.pid}
+      `))
+}
+
+function contains(args) {
+
+}
+
+const launch = function launch(args) {
+  const cases = {
+    generate,
+  }
+  const program = args._[0]
+  // Pausing here
+}
+
+
+Brink.launch({
+  cwd: argv.cwd,
+  configPath: argv.brinkfile || argv.config,
+  require: argv.require,
+  completion: argv.completion,
+}, function invoke(env) {
+  // log useful data
+  log.info('arguments', argv)
+  if (dd) {
+    log.debug('env:', env)
+    log.debug('argv:', argv)
+    log.debug('config:', this)
+  }
+
+  // log changing of cwd
+  if (process.cwd() !== env.cwd) {
+    process.chdir(env.cwd)
+    log.verbose(`Changing dir to ${env.cwd}`)
+  }
+
+  // TODO: turn this shit back on once the module is more mature
+  // requires local install of brink cli
+  // if (!env.modulePath) {
+  //   const err = new Error(`Local ${Brink.moduleName} module not found in: ${env.cwd}`)
+  //   log.error(err)
+  //   process.exit(1)
+  // }
+
+  // require config
+  let configuration
+  if (env.configPath) {
+    configuration = require(env.configPath)
+    log.debug('configuration', configuration)
+    return launch(argv)
+  }
+
+  log.error(`No ${Brink.configName} found.`)
+  process.exit(1)
+})
