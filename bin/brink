@@ -26,7 +26,7 @@ const log = global.log = new Logger(argv)
 const Brink = new Liftoff({
   name: 'brink',
   processTitle: 'brink',
-  moduleName: 'brink-cli',
+  moduleName: 'brink',
   configName: 'brinkfile',
   configFiles: {
     brinkfile: {
@@ -89,11 +89,11 @@ const invoke = function invoke(env) {
 
   // TODO: turn this shit back on once the module is more mature
   // requires local install of brink cli
-  // if (!env.modulePath) {
-  //   const err = new Error(`Local ${Brink.moduleName} module not found in: ${env.cwd}`)
-  //   log.error(err)
-  //   process.exit(1)
-  // }
+  if (!env.modulePath) {
+    const err = new Error(`Local ${Brink.moduleName} module not found in: ${env.cwd}`)
+    log.error(err)
+    process.exit(1)
+  }
 
   // require config
   let configuration

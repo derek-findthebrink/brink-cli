@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import CSSModules from 'react-css-modules'
 
-import styles from './${name}.scss'
+import styles from './${styleImport}.scss'
 
 @CSSModules(styles)
 export default class ${name} extends React.Component {
@@ -13,6 +13,6 @@ export default class ${name} extends React.Component {
     )
   }
 }
-__component.propTypes = {
+${name}.propTypes = {
   children: PropTypes.element.isRequired,
 }
