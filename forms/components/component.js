@@ -18,10 +18,13 @@ export default function (name, args, opts) {
   const upperName = _.upperFirst(camelName)
 
   const js = jsCompiled({
-    name: upperName,
+    name,
+    className: upperName,
     styleImport: `${name}.scss`,
   })
-  const scss = scssCompiled({ name: dashName })
+  const scss = scssCompiled({
+    name: dashName,
+  })
 
   return Q({
     js,

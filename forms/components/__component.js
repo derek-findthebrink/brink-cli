@@ -1,18 +1,19 @@
 import React, { PropTypes } from 'react'
-import CSSModules from 'react-css-modules'
+import classNames from 'classnames/bind'
 
-import styles from './${styleImport}.scss'
+import styles from './${styleImport}'
 
-@CSSModules(styles)
-export default class ${name} extends React.Component {
-  render() {
-    return (
-      <div styleName="container">
-        {/* add content here */}
-      </div>
-    )
-  }
+const cx = classNames.bind(styles)
+
+const ${className} = (props) => {
+  return (
+    <div className={cx('container')}>
+      {/* add content here */}
+    </div>
+  )
 }
-${name}.propTypes = {
-  children: PropTypes.element.isRequired,
+${className}.propTypes = {
+  // children: PropTypes.element.isRequired,
 }
+
+export default ${className}

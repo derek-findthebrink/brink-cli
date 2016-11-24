@@ -4,9 +4,9 @@ import fs from 'fs-extra'
 import Q from 'q'
 
 import component from '../forms/components/component'
+import container from '../forms/containers/container'
 
 function getDirectory(config, name, base) {
-  console.log(config, name)
   return nodepath.join(base, config.root, name)
 }
 function makeFileName(dir, name, key) {
@@ -15,7 +15,6 @@ function makeFileName(dir, name, key) {
 function writeBlueprint(dir, name, data, key) {
   const write = Q.nfbind(fs.writeFile)
   const fname = makeFileName(dir, name, key)
-  console.log({ dir, name, data, key, fname })
   return write(fname, data)
 }
 
@@ -30,17 +29,17 @@ export default function generate(argv, env) {
 
   // load config
   const {
-    configFiles,
     configBase,
     configPath,
   } = env
-  const config = require(configPath).generate.component
+  const config = require(configPath).generate[type]
   const opts = _.omit(argv, '_')
 
   // handle custom
   // handle base
   const cases = {
     component,
+    container,
   }
   if (!cases[type]) {
     // handle fail

@@ -7,6 +7,7 @@ import interpret from 'interpret'
 import minimist from 'minimist'
 import Logger from '../src/helpers/log'
 
+import init from '../src/init'
 import generate from '../src/generate'
 
 // Arguments
@@ -30,6 +31,12 @@ const Brink = new Liftoff({
   configName: 'brinkfile',
   configFiles: {
     brinkfile: {
+      up: {
+        path: '.',
+        findUp: true,
+      },
+    },
+    package: {
       up: {
         path: '.',
         findUp: true,
@@ -84,7 +91,7 @@ const invoke = function invoke(env) {
   // log changing of cwd
   if (process.cwd() !== env.cwd) {
     process.chdir(env.cwd)
-    log.verbose(`Changing dir to ${env.cwd}`)
+    log.info(`Changing dir to ${env.cwd}`)
   }
 
   // TODO: turn this shit back on once the module is more mature
